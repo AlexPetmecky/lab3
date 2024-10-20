@@ -17,9 +17,9 @@ class ViewController: UIViewController {
     
     
     
-    
-    
-    
+
+    @IBAction func ModuleB(_ sender: Any) {
+    }
     
     
     
