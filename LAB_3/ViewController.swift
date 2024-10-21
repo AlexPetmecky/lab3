@@ -22,7 +22,7 @@ class ViewController: UIViewController, MotionDelegate {
     
     var animationView: LottieAnimationView!
     
-    var STEP_GOAL = 10000
+    var STEP_GOAL = 100
     let motionModel = MotionModel()
     let pedometer = CMPedometer()
     
@@ -110,6 +110,7 @@ class ViewController: UIViewController, MotionDelegate {
                 
                 // Update the progress of the animation based on the step count
                 self.animationView.currentProgress = CGFloat(progress)  // Set animation progress based on steps
+                self.animationView.play(fromProgress: CGFloat(progress - 0.01), toProgress: CGFloat(progress), loopMode: .none) // Play the animation from the previous progress to the new one
             }
         }
     
