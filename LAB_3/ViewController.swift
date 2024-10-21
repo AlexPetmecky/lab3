@@ -19,10 +19,12 @@ class ViewController: UIViewController, MotionDelegate {
     
     @IBAction func ModuleB(_ sender: Any) {   //should only appear after step goal is reached
     }
+    @IBOutlet weak var TitleLabel: UILabel!
     
     var animationView: LottieAnimationView!
     
-    var STEP_GOAL = 100
+    var STEP_GOAL = 100    //NEED A BUTTON TO SOMEHOW MANUALLY SET THIS, EASY TO TEST WITH 100 FOR RN
+    
     let motionModel = MotionModel()
     let pedometer = CMPedometer()
     
@@ -34,17 +36,24 @@ class ViewController: UIViewController, MotionDelegate {
         motionModel.startPedometerMonitoring()
         motionModel.startActivityMonitoring()
         
+        TitleLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 22)
+        stepsTodayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
+        stepsYesterdayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
+        activityLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
+        
         animationView = LottieAnimationView(name: "circleprogress")
         
         // Adjust the size and center both horizontally and vertically
-            animationView.frame = CGRect(x: 0, y: 0, width: 400, height: 400) // Set size
-            animationView.center = view.center // Center it both horizontally and vertically
-            animationView.contentMode = .scaleAspectFit // Maintain aspect ratio
+        animationView.frame = CGRect(x: 0, y: 44, width: 400, height: 400) // Set size
+        animationView.center.x = view.center.x // Center it both horizontally and vertically
+        animationView.contentMode = .scaleAspectFit // Maintain aspect ratio
             view.addSubview(animationView) // Add to view hierarchy
+        
+        //THIS JUST RUNS ONCE SO U CAN SEE THE ANIMATINO BEFORE IT ACTUALLY CORRELATES TO STEPS , can change this or make it go faster or not have it play at all 
             
-            // Start the animation
-            animationView.loopMode = .playOnce // Loop the animation
-            animationView.play() // Play the animation
+//        // Start the animation
+//        animationView.loopMode = .playOnce // Loop the animation
+//        animationView.play() // Play the animation
     }
     
     func fetchYesterdaySteps() {
@@ -86,17 +95,17 @@ class ViewController: UIViewController, MotionDelegate {
     
     func activityUpdated(activity: CMMotionActivity) {
         if activity.walking {
-            activityLabel.text = "🚶‍♂️"  // Walking emoji
+            activityLabel.text = "Current Activity: 🚶‍♂️"  // Walking emoji
         } else if activity.running {
-            activityLabel.text = "🏃‍♂️"  // Running emoji
+            activityLabel.text = "Current Activity: 🏃‍♂️"  // Running emoji
         } else if activity.cycling {
-            activityLabel.text = "🚴‍♂️"  // Cycling emoji
+            activityLabel.text = "Current Activity: 🚴‍♂️"  // Cycling emoji
         } else if activity.automotive {
-            activityLabel.text = "🚗"  // Driving emoji
+            activityLabel.text = "Current Activity: 🚗"  // Driving emoji
         } else if activity.stationary {
-            activityLabel.text = "🛑"  // Still emoji
+            activityLabel.text = "Current Activity: 🛑"  // Still emoji
         } else {
-            activityLabel.text = "❓"  // Unknown emoji
+            activityLabel.text = "Current Activity: ❓"  // Unknown emoji
         }
     }
     
@@ -106,7 +115,8 @@ class ViewController: UIViewController, MotionDelegate {
                 let progress = min(Float(stepsToday) / Float(self.STEP_GOAL), 1.0)  // Calculate progress as a percentage, but cap it at 100%
                 
                 // Update the steps label
-                self.stepsTodayLabel.text = "Today's steps: \(stepsToday)"
+                self.stepsTodayLabel.text = "Today's steps: \(stepsToday)/\(self.STEP_GOAL)"
+                        
                 
                 // Update the progress of the animation based on the step count
                 self.animationView.currentProgress = CGFloat(progress)  // Set animation progress based on steps
