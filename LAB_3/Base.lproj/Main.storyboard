@@ -65,7 +65,13 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" id="eKJ-MG-CgS"/>
+                    <navigationItem key="navigationItem" id="eKJ-MG-CgS">
+                        <barButtonItem key="rightBarButtonItem" title="Set Step Goal" id="irh-tn-eZK">
+                            <connections>
+                                <action selector="setStepGoaltapped:" destination="BYZ-38-t0r" id="ntk-dS-vbD"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="TitleLabel" destination="k3h-Gz-beP" id="p3j-UL-O9o"/>
                         <outlet property="activityLabel" destination="Sal-Ik-hoh" id="8K1-Zy-aae"/>

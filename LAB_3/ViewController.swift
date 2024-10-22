@@ -25,7 +25,6 @@ class ViewController: UIViewController, MotionDelegate {
     let motionModel = MotionModel()
     let pedometer = CMPedometer()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -34,7 +33,7 @@ class ViewController: UIViewController, MotionDelegate {
         motionModel.startActivityMonitoring()
         
         TitleLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 27)
-        stepsTodayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 25)
+        stepsTodayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 30)
         stepsYesterdayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
         activityLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
         congratsLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 15)
@@ -76,6 +75,29 @@ class ViewController: UIViewController, MotionDelegate {
             }
         }
     }
+    
+    @IBAction func setStepGoaltapped(_ sender: UIBarButtonItem) {
+        let alert = UIAlertController(title: "Set Step Goal", message: "Enter your step goal for today:", preferredStyle: .alert)
+            
+            alert.addTextField { textField in
+                textField.placeholder = "Step goal"
+                textField.keyboardType = .numberPad
+            }
+            
+            let setAction = UIAlertAction(title: "Set", style: .default) { _ in
+                if let textField = alert.textFields?.first, let text = textField.text, let goal = Int(text) {
+                    self.STEP_GOAL = goal
+                }
+            }
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            
+            alert.addAction(setAction)
+            alert.addAction(cancelAction)
+            
+            present(alert, animated: true, completion: nil)
+    }
+    
     
     //Dont think we need this anymore, todays steps are being fetched in real time
 //    func fetchTodaySteps() {
