@@ -14,17 +14,14 @@ class ViewController: UIViewController, MotionDelegate {
     
     @IBOutlet weak var stepsTodayLabel: UILabel!      //create labels to show todays steps and yest
     @IBOutlet weak var stepsYesterdayLabel: UILabel!
-    
     @IBOutlet weak var activityLabel: UILabel!
-    
     @IBAction func ModuleB(_ sender: Any) {   //should only appear after step goal is reached
     }
     @IBOutlet weak var TitleLabel: UILabel!
+    @IBOutlet weak var congratsLabel: UILabel!
     
     var animationView: LottieAnimationView!
-    
-    var STEP_GOAL = 100    //NEED A BUTTON TO SOMEHOW MANUALLY SET THIS, EASY TO TEST WITH 100 FOR RN
-    
+    var STEP_GOAL = 20    //NEED A BUTTON TO SOMEHOW MANUALLY SET THIS, EASY TO TEST WITH 100 FOR RN
     let motionModel = MotionModel()
     let pedometer = CMPedometer()
     
@@ -36,15 +33,16 @@ class ViewController: UIViewController, MotionDelegate {
         motionModel.startPedometerMonitoring()
         motionModel.startActivityMonitoring()
         
-        TitleLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 22)
-        stepsTodayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
+        TitleLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 27)
+        stepsTodayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 25)
         stepsYesterdayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
         activityLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
+        congratsLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 15)
         
         animationView = LottieAnimationView(name: "circleprogress")
         
-        // Adjust the size and center both horizontally and vertically
-        animationView.frame = CGRect(x: 0, y: 44, width: 400, height: 400) // Set size
+        // Adjust the size and center horizontally
+        animationView.frame = CGRect(x: 0, y: 70, width: 450, height: 450) // Set size
         animationView.center.x = view.center.x // Center it both horizontally and vertically
         animationView.contentMode = .scaleAspectFit // Maintain aspect ratio
             view.addSubview(animationView) // Add to view hierarchy
@@ -54,6 +52,8 @@ class ViewController: UIViewController, MotionDelegate {
 //        // Start the animation
 //        animationView.loopMode = .playOnce // Loop the animation
 //        animationView.play() // Play the animation
+        
+        congratsLabel.isHidden = true   //congrats hidden initially
     }
     
     func fetchYesterdaySteps() {
@@ -77,35 +77,36 @@ class ViewController: UIViewController, MotionDelegate {
         }
     }
     
-    func fetchTodaySteps() {
-        let calendar = Calendar.current
-        let startOfToday = calendar.startOfDay(for: Date()) // Change this if Apple's Health app uses a different start time, e.g., 4 AM
-        
-        pedometer.queryPedometerData(from: startOfToday, to: Date()) { (data, error) in
-            DispatchQueue.main.async {
-                if let data = data {
-                    self.stepsTodayLabel.text = "Today's steps: \(data.numberOfSteps)"
-                } else {
-                    self.stepsTodayLabel.text = "Error fetching today's steps"
-                }
-            }
-        }
-    }
+    //Dont think we need this anymore, todays steps are being fetched in real time
+//    func fetchTodaySteps() {
+//        let calendar = Calendar.current
+//        let startOfToday = calendar.startOfDay(for: Date()) // Change this if Apple's Health app uses a different start time, e.g., 4 AM
+//        
+//        pedometer.queryPedometerData(from: startOfToday, to: Date()) { (data, error) in
+//            DispatchQueue.main.async {
+//                if let data = data {
+//                    self.stepsTodayLabel.text = "Today's steps: \(data.numberOfSteps)"
+//                } else {
+//                    self.stepsTodayLabel.text = "Error fetching today's steps"
+//                }
+//            }
+//        }
+//    }
     
     
     func activityUpdated(activity: CMMotionActivity) {
         if activity.walking {
-            activityLabel.text = "Current Activity: 🚶‍♂️"  // Walking emoji
+            activityLabel.text = "Currently: Walking \n🚶‍♂️"  // Walking emoji
         } else if activity.running {
-            activityLabel.text = "Current Activity: 🏃‍♂️"  // Running emoji
+            activityLabel.text = "Currently: Running \n🏃‍♂️"  // Running emoji
         } else if activity.cycling {
-            activityLabel.text = "Current Activity: 🚴‍♂️"  // Cycling emoji
+            activityLabel.text = "Currently: Cycling \n🚴‍♂️"  // Cycling emoji
         } else if activity.automotive {
-            activityLabel.text = "Current Activity: 🚗"  // Driving emoji
+            activityLabel.text = "Currently: Driving \n🚗"  // Driving emoji
         } else if activity.stationary {
-            activityLabel.text = "Current Activity: 🛑"  // Still emoji
+            activityLabel.text = "Currently: Still \n🛑"  // Still emoji
         } else {
-            activityLabel.text = "Current Activity: ❓"  // Unknown emoji
+            activityLabel.text = "Currently: Not sure! \n❓"  // Unknown emoji
         }
     }
     
@@ -115,7 +116,15 @@ class ViewController: UIViewController, MotionDelegate {
                 let progress = min(Float(stepsToday) / Float(self.STEP_GOAL), 1.0)  // Calculate progress as a percentage, but cap it at 100%
                 
                 // Update the steps label
-                self.stepsTodayLabel.text = "Today's steps: \(stepsToday)/\(self.STEP_GOAL)"
+                self.stepsTodayLabel.text =  "\(stepsToday)/\(self.STEP_GOAL)"
+                
+                //if step goal is reached display congrats label
+                if stepsToday >= self.STEP_GOAL {
+                                self.congratsLabel.text = "🎉 Congratulations!\nYou have reached your step goal!"
+                                self.congratsLabel.isHidden = false
+                            } else {
+                                self.congratsLabel.isHidden = true
+                            }
                         
                 
                 // Update the progress of the animation based on the step count
