@@ -8,5 +8,15 @@
 import UIKit
 
 class DataObj: NSObject {
-
+    static let sharedInstance = DataObj()
+    
+    var stepsTaken = 0
+    
+    func setStepsTaken(steps:Int){
+        self.stepsTaken = steps
+    }
+    
+    func getStepsTaken()->Int{
+        return self.stepsTaken
+    }
 }
