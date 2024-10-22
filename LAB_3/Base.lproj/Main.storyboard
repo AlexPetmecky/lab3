@@ -70,19 +70,13 @@
             </objects>
             <point key="canvasLocation" x="973.28244274809151" y="-2.1126760563380285"/>
         </scene>
-        <!--View Controller-->
+        <!--ModuleB View Controller-->
         <scene sceneID="VqO-29-251">
             <objects>
-                <viewController id="x0e-JI-SNU" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="10f-2D-NLs">
+                <viewController id="x0e-JI-SNU" customClass="ModuleBViewController" customModule="LAB_3" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="10f-2D-NLs" customClass="SKView">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <skView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nJL-7S-y6t">
-                                <rect key="frame" x="76" y="362" width="240" height="128"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </skView>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="d8q-Ux-mlf"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
