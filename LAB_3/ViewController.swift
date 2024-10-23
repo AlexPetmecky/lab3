@@ -22,53 +22,70 @@ class ViewController: UIViewController, MotionDelegate {
     @IBOutlet weak var congratsLabel: UILabel!
     
     var animationView: LottieAnimationView!
-    var STEP_GOAL = 7000       //can set with button, this is default value
+    var STEP_GOAL = 7000      //can set with button, this is default value //HAVING an issue w this rn where if its set above
     let motionModel = MotionModel()
     let pedometer = CMPedometer()
     var yesterdayGoalMet: Bool = false
+    var stepsAtAppStart: Int = 0
+    var lastKnownSteps: Int = 0
     
 //    let dataObj = DataObj()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let savedGoal = UserDefaults.standard.value(forKey: "stepGoal") as? Int {
+                self.STEP_GOAL = savedGoal
+            }
+        
         congratsLabel.isHidden = true   //congrats hidden initially
         //ModuleB.isHidden = true
         
         motionModel.delegate = self           //motion updates will be updated here
         motionModel.startPedometerMonitoring()
         motionModel.startActivityMonitoring()
-        
-        TitleLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 27)
-        stepsTodayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 30)
-        stepsYesterdayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
-        activityLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
-        congratsLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 15)
-        
-        animationView = LottieAnimationView(name: "circleprogress")
-        
-        // Adjust the size and center horizontally
-        animationView.frame = CGRect(x: 0, y: 70, width: 450, height: 450) // Set size
-        animationView.center.x = view.center.x // Center it both horizontally and vertically
-        animationView.contentMode = .scaleAspectFit // Maintain aspect ratio
-            view.addSubview(animationView) // Add to view hierarchy
-        
-
-        congratsLabel.isHidden = true   //congrats hidden initially
+    
+        setupUI()
         
         fetchYesterdaySteps()
+        
+        fetchTodaySteps()
 
-        //THIS JUST RUNS ONCE SO U CAN SEE THE ANIMATINO BEFORE IT ACTUALLY CORRELATES TO STEPS , can change this or make it go faster or not have it play at all
-            
-//        // Start the animation
-//        animationView.loopMode = .playOnce // Loop the animation
-//        animationView.play() // Play the animation
-        
-        self.fetchYesterdaySteps()
-        if (DataObj.sharedInstance.getStepsTaken()>=STEP_GOAL){
-            congratsLabel.isHidden = false   //congrats hidden initially
-        }
-        
     }
+    
+    func setupUI() {
+            TitleLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 27)
+            stepsTodayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 30)
+            stepsYesterdayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
+            activityLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
+            congratsLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 15)
+
+            animationView = LottieAnimationView(name: "circleprogress")
+            animationView.frame = CGRect(x: 0, y: 70, width: 450, height: 450)
+            animationView.center.x = view.center.x
+            animationView.contentMode = .scaleAspectFit
+            view.addSubview(animationView)
+        }
+    func fetchTodaySteps() {
+            let calendar = Calendar.current
+            let now = Date()
+            
+            let startOfToday = calendar.startOfDay(for: now)
+
+            pedometer.queryPedometerData(from: startOfToday, to: now) { (data, error) in
+                DispatchQueue.main.async {
+                    if let data = data {
+                        self.stepsAtAppStart = Int(truncating: data.numberOfSteps)  // Store steps at app start
+                        self.stepsTodayLabel.text = "\(self.stepsAtAppStart)/\(self.STEP_GOAL)"
+                        let initialProgress = min(Float(self.stepsAtAppStart) / Float(self.STEP_GOAL), 1.0)
+                        self.animationView.currentProgress = CGFloat(initialProgress)
+                        self.animationView.play(fromProgress: CGFloat(initialProgress - 0.01), toProgress: CGFloat(initialProgress), loopMode: .none)
+                    } else {
+                        print("Error fetching today's steps: \(error?.localizedDescription ?? "unknown error")")
+                    }
+                }
+            }
+        }
     
     func fetchYesterdaySteps() {
         let calendar = Calendar.current
@@ -98,6 +115,8 @@ class ViewController: UIViewController, MotionDelegate {
             }
         }
     
+    
+    
     @IBAction func setStepGoaltapped(_ sender: UIBarButtonItem) {
         let alert = UIAlertController(title: "Set Step Goal", message: "Enter your step goal for today:", preferredStyle: .alert)
             
@@ -109,6 +128,10 @@ class ViewController: UIViewController, MotionDelegate {
             let setAction = UIAlertAction(title: "Set", style: .default) { _ in
                 if let textField = alert.textFields?.first, let text = textField.text, let goal = Int(text) {
                     self.STEP_GOAL = goal
+                    UserDefaults.standard.set(self.STEP_GOAL, forKey: "stepGoal")
+                    
+                    self.fetchTodaySteps()
+                    
                 }
             }
             
@@ -138,29 +161,59 @@ class ViewController: UIViewController, MotionDelegate {
     }
     
     func pedometerUpdated(pedData: CMPedometerData) {
-            DispatchQueue.main.async {
-                let stepsToday = pedData.numberOfSteps.intValue // Get today's step count
-                let progress = min(Float(stepsToday) / Float(self.STEP_GOAL), 1.0)  // Calculate progress as a percentage, but cap it at 100%
-                
-                // Update the steps label
-                self.stepsTodayLabel.text =  "\(stepsToday)/\(self.STEP_GOAL)"
-                
-                //if step goal is reached display congrats label
-                if stepsToday >= self.STEP_GOAL {
-                                self.congratsLabel.text = "🎉 Congratulations!\nYou have reached your step goal!"
-                                self.congratsLabel.isHidden = false
-                            } else {
-                                self.congratsLabel.isHidden = true
-                            }
-                        
-                
-                // Update the progress of the animation based on the step count
-                self.animationView.currentProgress = CGFloat(progress)  // Set animation progress based on steps
-                self.animationView.play(fromProgress: CGFloat(progress - 0.01), toProgress: CGFloat(progress), loopMode: .none) // Play the animation from the previous progress to the new one
+        DispatchQueue.main.async {
+            let totalStepsToday = self.stepsAtAppStart + pedData.numberOfSteps.intValue // Directly use numberOfSteps
+            
+            // Update the label with today's total steps
+            self.stepsTodayLabel.text = "\(totalStepsToday)/\(self.STEP_GOAL)"
+                    
+            // Calculate the progress towards the goal (cap it at 100%)
+            let progress = min(Float(totalStepsToday) / Float(self.STEP_GOAL), 1.0)
+            self.animationView.currentProgress = CGFloat(progress)
+            self.animationView.play(fromProgress: CGFloat(progress - 0.01), toProgress: CGFloat(progress), loopMode: .none)
+            
+            // Show congratulations message if goal is reached
+            if totalStepsToday >= self.STEP_GOAL {
+                self.congratsLabel.text = "🎉 Congratulations!\nYou have reached your step goal!"
+                self.congratsLabel.isHidden = false
+            } else {
+                self.congratsLabel.isHidden = true
             }
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fetchTodaySteps() // Refresh today's steps when the view appears
+    }
     
 }//end of view controller
+
+
+//func pedometerUpdated(pedData: CMPedometerData) {
+//    DispatchQueue.main.async {
+//            // Get the total steps for the day from the pedometer
+//            let totalSteps = pedData.numberOfSteps.intValue
+//            
+//            // Update the label with today's total steps
+//            self.stepsTodayLabel.text = "\(totalSteps)/\(self.STEP_GOAL)"
+//            
+//            // Calculate the progress towards the goal (cap it at 100%)
+//            let progress = min(Float(totalSteps) / Float(self.STEP_GOAL), 1.0)
+//            
+//            // Show congratulations message if goal is reached
+//            if totalSteps >= self.STEP_GOAL {
+//                self.congratsLabel.text = "🎉 Congratulations!\nYou have reached your step goal!"
+//                self.congratsLabel.isHidden = false
+//            } else {
+//                self.congratsLabel.isHidden = true
+//            }
+//
+//            // Update the animation view based on progress
+//            self.animationView.currentProgress = CGFloat(progress)
+//            self.animationView.play(fromProgress: CGFloat(progress - 0.01), toProgress: CGFloat(progress), loopMode: .none)
+//        }
+//    }
     
    
 
