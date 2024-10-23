@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		31F0192B2CC5CBEB005BEE66 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 31F0192A2CC5CBEB005BEE66 /* Lottie */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
 		C6D67CFA2CBEE6760010BEE4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -69,7 +65,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				31F0192B2CC5CBEB005BEE66 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +125,6 @@
 			);
 			name = LAB_3;
 			packageProductDependencies = (
-				31F0192A2CC5CBEB005BEE66 /* Lottie */,
 			);
 			productName = LAB_3;
 			productReference = C6D67CE32CBEE6740010BEE4 /* LAB_3.app */;
@@ -214,9 +208,6 @@
 			);
 			mainGroup = C6D67CDA2CBEE6740010BEE4;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-				31F019292CC5CB81005BEE66 /* XCRemoteSwiftPackageReference "lottie-ios" */,
-			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C6D67CE42CBEE6740010BEE4 /* Products */;
 			projectDirPath = "";
@@ -298,7 +289,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = N8TJNZFDSR;
+				DEVELOPMENT_TEAM = 7SS3BK2SRA;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LAB_3/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -306,12 +297,13 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Alex-Petmecky.LAB-3-";
+				PRODUCT_BUNDLE_IDENTIFIER = "Alex-Petmecky.LAB-3-2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -326,7 +318,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = N8TJNZFDSR;
+				DEVELOPMENT_TEAM = 7SS3BK2SRA;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LAB_3/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -334,12 +326,13 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Alex-Petmecky.LAB-3-";
+				PRODUCT_BUNDLE_IDENTIFIER = "Alex-Petmecky.LAB-3-2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -574,25 +567,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		31F019292CC5CB81005BEE66 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/airbnb/lottie-ios";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.5.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		31F0192A2CC5CBEB005BEE66 /* Lottie */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 31F019292CC5CB81005BEE66 /* XCRemoteSwiftPackageReference "lottie-ios" */;
-			productName = Lottie;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C6D67CDB2CBEE6740010BEE4 /* Project object */;
 }
