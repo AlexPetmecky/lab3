@@ -29,6 +29,8 @@ class ViewController: UIViewController, MotionDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        congratsLabel.isHidden = true   //congrats hidden initially
+        //ModuleB.isHidden = true
         
         motionModel.delegate = self           //motion updates will be updated here
         motionModel.startPedometerMonitoring()
@@ -54,7 +56,13 @@ class ViewController: UIViewController, MotionDelegate {
 //        animationView.loopMode = .playOnce // Loop the animation
 //        animationView.play() // Play the animation
         
-        congratsLabel.isHidden = true   //congrats hidden initially
+        self.fetchYesterdaySteps()
+        if (DataObj.sharedInstance.getStepsTaken()>=STEP_GOAL){
+            congratsLabel.isHidden = false   //congrats hidden initially
+        }
+        
+        
+        
     }
     
     func fetchYesterdaySteps() {
