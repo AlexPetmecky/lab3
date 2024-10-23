@@ -10,12 +10,16 @@ import SpriteKit
 
 class ModuleBViewController: UIViewController {
 
-    let dataObj = DataObj()
+//    let dataObj = DataObj()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        var stepsTaken = dataObj.getStepsTaken()
+        
+        if(DataObj.sharedInstance.hasOpened == 0){
+            DataObj.sharedInstance.setStepsTaken(steps: 10000)
+            DataObj.sharedInstance.hasOpened = 1
+        }
+        var stepData = DataObj.sharedInstance.getStepsTaken()
         
         let scene = GameScene(size: view.bounds.size)
         let skView = view as! SKView // the view in storyboard must be an SKView

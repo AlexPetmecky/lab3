@@ -50,6 +50,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let bucket3 = SKSpriteNode()
     let bucket4 = SKSpriteNode()
     let bucket5 = SKSpriteNode()
+    var remainingSteps = 0
     let scoreLabel = SKLabelNode(fontNamed: "HelveticaNeue-Bold")
     let stepLabel = SKLabelNode(fontNamed: "HelveticaNeue-Bold")
     var score:Int = 0 {
@@ -67,6 +68,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // make sides to the screen
         self.addSidesAndTop()
         
+        //sets steps from yesterday
+        
+        remainingSteps = DataObj.sharedInstance.getStepsTaken()
+        
         //sets up plinko game
         self.addPlinkoGrid()
         self.addEntryBumpers()
@@ -75,14 +80,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // start motion for gravity
         self.startMotionUpdates()
-        
-        // add a spinning block
-//        self.addBlockAtPoint(CGPoint(x: size.width * 0.5, y: size.height * 0.35))
-        
-        self.addPuck()
-        
+            
         self.addScore()
-        
         self.score = 0
     }
     
@@ -96,7 +95,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         addChild(scoreLabel)
         
-        stepLabel.text = "Steps from Yesterday: 0"
+        stepLabel.text = "Steps from Yesterday: " + String(remainingSteps)
         stepLabel.fontSize = 20
         stepLabel.fontColor = SKColor.white
         stepLabel.position = CGPoint(x: size.width * 0.5, y: size.height * 0.85)
@@ -310,7 +309,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // MARK: =====Delegate Functions=====
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.addPuck()
+        
+        if(remainingSteps > 99){
+            self.addPuck()
+            remainingSteps = remainingSteps-100
+            DataObj.sharedInstance.setStepsTaken(steps: remainingSteps)
+            stepLabel.text = "Steps from Yesterday: " + String(remainingSteps)
+        }
+        else{
+            stepLabel.text = "Not enough steps! You only have " + String(remainingSteps)
+        }
     }
     
     func didBegin(_ contact: SKPhysicsContact) {

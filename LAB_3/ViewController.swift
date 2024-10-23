@@ -25,7 +25,7 @@ class ViewController: UIViewController, MotionDelegate {
     let motionModel = MotionModel()
     let pedometer = CMPedometer()
     
-    let dataObj = DataObj()
+//    let dataObj = DataObj()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,7 +70,7 @@ class ViewController: UIViewController, MotionDelegate {
                 DispatchQueue.main.async {
                     if let data = data {
                         self.stepsYesterdayLabel.text = "Yesterday's steps: \(data.numberOfSteps)"
-                        self.dataObj.setStepsTaken(steps: Int(truncating: data.numberOfSteps))
+                        DataObj.sharedInstance.setStepsTaken(steps: Int(truncating: data.numberOfSteps))
                     } else {
                         self.stepsYesterdayLabel.text = "Error fetching yesterday's steps"
                     }

@@ -12,6 +12,10 @@ class DataObj: NSObject {
     
     var stepsTaken = 0
     
+    var hasOpened = 0
+    
+    private override init() { }
+    
     func setStepsTaken(steps:Int){
         self.stepsTaken = steps
     }
