@@ -17,10 +17,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cs0-Cv-Of5">
-                                <rect key="frame" x="148" y="763" width="96" height="35"/>
+                                <rect key="frame" x="144" y="763" width="105" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Module B"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Play Game"/>
                                 <connections>
                                     <action selector="ModuleB:" destination="BYZ-38-t0r" eventType="touchUpInside" id="myL-GW-061"/>
                                     <segue destination="x0e-JI-SNU" kind="show" id="ujU-mw-Fph"/>
@@ -76,6 +76,7 @@
                         <outlet property="TitleLabel" destination="k3h-Gz-beP" id="p3j-UL-O9o"/>
                         <outlet property="activityLabel" destination="Sal-Ik-hoh" id="8K1-Zy-aae"/>
                         <outlet property="congratsLabel" destination="jRy-fr-LjH" id="kOt-Yx-Lft"/>
+                        <outlet property="moduleBButton" destination="Cs0-Cv-Of5" id="Ruc-wi-aca"/>
                         <outlet property="stepsTodayLabel" destination="a15-iH-av6" id="mdO-wz-HRx"/>
                         <outlet property="stepsYesterdayLabel" destination="M2z-Ql-3sJ" id="1hG-Rx-bDh"/>
                     </connections>

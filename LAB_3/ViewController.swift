@@ -1,4 +1,4 @@
-//
+////
 //  ViewController.swift
 //  LAB_3
 //
@@ -12,18 +12,20 @@ import Lottie
 
 class ViewController: UIViewController, MotionDelegate {
     
-    @IBOutlet weak var stepsTodayLabel: UILabel!      //create labels to show todays steps and yest
+    @IBOutlet weak var stepsTodayLabel: UILabel!
     @IBOutlet weak var stepsYesterdayLabel: UILabel!
     @IBOutlet weak var activityLabel: UILabel!
+    @IBOutlet weak var moduleBButton: UIButton!
     @IBAction func ModuleB(_ sender: Any) {   //should only appear after step goal is reached
     }
     @IBOutlet weak var TitleLabel: UILabel!
     @IBOutlet weak var congratsLabel: UILabel!
     
     var animationView: LottieAnimationView!
-    var STEP_GOAL = 20    //NEED A BUTTON TO SOMEHOW MANUALLY SET THIS, EASY TO TEST WITH 100 FOR RN
+    var STEP_GOAL = 7000       //can set with button, this is default value
     let motionModel = MotionModel()
     let pedometer = CMPedometer()
+    var yesterdayGoalMet: Bool = false
     
 //    let dataObj = DataObj()
     
@@ -50,7 +52,12 @@ class ViewController: UIViewController, MotionDelegate {
         animationView.contentMode = .scaleAspectFit // Maintain aspect ratio
             view.addSubview(animationView) // Add to view hierarchy
         
-        //THIS JUST RUNS ONCE SO U CAN SEE THE ANIMATINO BEFORE IT ACTUALLY CORRELATES TO STEPS , can change this or make it go faster or not have it play at all 
+
+        congratsLabel.isHidden = true   //congrats hidden initially
+        
+        fetchYesterdaySteps()
+
+        //THIS JUST RUNS ONCE SO U CAN SEE THE ANIMATINO BEFORE IT ACTUALLY CORRELATES TO STEPS , can change this or make it go faster or not have it play at all
             
 //        // Start the animation
 //        animationView.loopMode = .playOnce // Loop the animation
@@ -61,31 +68,35 @@ class ViewController: UIViewController, MotionDelegate {
             congratsLabel.isHidden = false   //congrats hidden initially
         }
         
-        
-        
     }
     
     func fetchYesterdaySteps() {
         let calendar = Calendar.current
         let now = Date()
-        
-        
-        //gets start of today, minus one for start of yesterday
-        if let startOfYesterday = calendar.date(byAdding: .day, value: -1, to:    calendar.startOfDay(for: now)),
-           let endOfYesterday = calendar.date(byAdding: .second, value: -1, to: calendar.startOfDay(for: now)) {
-            
-            pedometer.queryPedometerData(from: startOfYesterday, to: endOfYesterday) { (data, error) in
-                DispatchQueue.main.async {
-                    if let data = data {
-                        self.stepsYesterdayLabel.text = "Yesterday's steps: \(data.numberOfSteps)"
-                        DataObj.sharedInstance.setStepsTaken(steps: Int(truncating: data.numberOfSteps))
-                    } else {
-                        self.stepsYesterdayLabel.text = "Error fetching yesterday's steps"
+
+            //gets start of today, minus one for start of yesterday
+            if let startOfYesterday = calendar.date(byAdding: .day, value: -1, to:    calendar.startOfDay(for: now)),
+               let endOfYesterday = calendar.date(byAdding: .second, value: -1, to: calendar.startOfDay(for: now)) {
+                
+                pedometer.queryPedometerData(from: startOfYesterday, to: endOfYesterday) { (data, error) in
+                    DispatchQueue.main.async {
+                        if let data = data {
+                            let yesterdaySteps = Int(truncating: data.numberOfSteps)     //just made this into a variable for clarity
+                            self.stepsYesterdayLabel.text = "Yesterday's steps: \(yesterdaySteps)"
+                            
+                            DataObj.sharedInstance.setStepsTaken(steps: yesterdaySteps)
+                            
+                            self.yesterdayGoalMet = yesterdaySteps >= self.STEP_GOAL     //check if yesterdays goal was met
+                            self.moduleBButton.isHidden = !self.yesterdayGoalMet    //if it was not met, hide the button
+                            
+                        } else {
+                            self.stepsYesterdayLabel.text = "Error fetching yesterday's steps"
+                            self.moduleBButton.isHidden = true   //hide button if error
+                        }
                     }
                 }
             }
         }
-    }
     
     @IBAction func setStepGoaltapped(_ sender: UIBarButtonItem) {
         let alert = UIAlertController(title: "Set Step Goal", message: "Enter your step goal for today:", preferredStyle: .alert)
@@ -110,36 +121,19 @@ class ViewController: UIViewController, MotionDelegate {
     }
     
     
-    //Dont think we need this anymore, todays steps are being fetched in real time
-//    func fetchTodaySteps() {
-//        let calendar = Calendar.current
-//        let startOfToday = calendar.startOfDay(for: Date()) // Change this if Apple's Health app uses a different start time, e.g., 4 AM
-//        
-//        pedometer.queryPedometerData(from: startOfToday, to: Date()) { (data, error) in
-//            DispatchQueue.main.async {
-//                if let data = data {
-//                    self.stepsTodayLabel.text = "Today's steps: \(data.numberOfSteps)"
-//                } else {
-//                    self.stepsTodayLabel.text = "Error fetching today's steps"
-//                }
-//            }
-//        }
-//    }
-    
-    
     func activityUpdated(activity: CMMotionActivity) {
         if activity.walking {
-            activityLabel.text = "Currently: Walking \n🚶‍♂️"  // Walking emoji
+            activityLabel.text = "Currently: Walking \n🚶‍♂️"
         } else if activity.running {
-            activityLabel.text = "Currently: Running \n🏃‍♂️"  // Running emoji
+            activityLabel.text = "Currently: Running \n🏃‍♂️"
         } else if activity.cycling {
-            activityLabel.text = "Currently: Cycling \n🚴‍♂️"  // Cycling emoji
+            activityLabel.text = "Currently: Cycling \n🚴‍♂️"
         } else if activity.automotive {
-            activityLabel.text = "Currently: Driving \n🚗"  // Driving emoji
+            activityLabel.text = "Currently: Driving \n🚗"
         } else if activity.stationary {
-            activityLabel.text = "Currently: Still \n🛑"  // Still emoji
+            activityLabel.text = "Currently: Still \n🛑"
         } else {
-            activityLabel.text = "Currently: Not sure! \n❓"  // Unknown emoji
+            activityLabel.text = "Currently: Not sure! \n❓"
         }
     }
     
@@ -178,5 +172,58 @@ class ViewController: UIViewController, MotionDelegate {
      //SAVING TO USER DEFAULTS https://developer.apple.com/documentation/foundation/userdefaults#topics
      
      */
+
+
+/*
+ FOR TESTING
+ func fetchYesterdaySteps() {
+    let calendar = Calendar.current
+    let now = Date()
+    
+    let simulateSteps = true
+    let simulatedYesterdaySteps = 5
+    
+    if simulateSteps {
+                DispatchQueue.main.async {
+                    self.stepsYesterdayLabel.text = "Yesterday's steps: \(simulatedYesterdaySteps)"
+                    DataObj.sharedInstance.setStepsTaken(steps: simulatedYesterdaySteps)
+                    
+                    self.yesterdayGoalMet = simulatedYesterdaySteps >= self.STEP_GOAL
+                    self.moduleBButton.isHidden = !self.yesterdayGoalMet  // Show button if goal met
+                    
+                    if self.yesterdayGoalMet {
+                        print("Test: Yesterday's step goal was met.")
+                    } else {
+                        print("Test: Yesterday's step goal was NOT met.")
+                    }
+                }
+    }
+    else {
+        //gets start of today, minus one for start of yesterday
+        if let startOfYesterday = calendar.date(byAdding: .day, value: -1, to:    calendar.startOfDay(for: now)),
+           let endOfYesterday = calendar.date(byAdding: .second, value: -1, to: calendar.startOfDay(for: now)) {
+            
+            pedometer.queryPedometerData(from: startOfYesterday, to: endOfYesterday) { (data, error) in
+                DispatchQueue.main.async {
+                    if let data = data {
+                        let yesterdaySteps = Int(truncating: data.numberOfSteps)     //just made this into a variable for clarity
+                        self.stepsYesterdayLabel.text = "Yesterday's steps: \(yesterdaySteps)"
+                        
+                        DataObj.sharedInstance.setStepsTaken(steps: yesterdaySteps)
+                        
+                        self.yesterdayGoalMet = yesterdaySteps >= self.STEP_GOAL     //check if yesterdays goal was met
+                        self.moduleBButton.isHidden = !self.yesterdayGoalMet    //if it was not met, hide the button
+                        
+                    } else {
+                        self.stepsYesterdayLabel.text = "Error fetching yesterday's steps"
+                        self.moduleBButton.isHidden = true   //hide button if error
+                    }
+                }
+            }
+        }
+    }
+}
+
+ */
     
 
