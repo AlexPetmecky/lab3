@@ -204,10 +204,10 @@ class ViewController: UIViewController, MotionDelegate {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        fetchTodaySteps() // refresh today's steps when the app reopens
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        fetchTodaySteps() // refresh today's steps when the app reopens
+//    }
     
 }//end of view controller
 
