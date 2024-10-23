@@ -15,10 +15,10 @@ class ModuleBViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if(DataObj.sharedInstance.hasOpened == 0){
-            DataObj.sharedInstance.setStepsTaken(steps: 10000)
-            DataObj.sharedInstance.hasOpened = 1
-        }
+//        if(DataObj.sharedInstance.hasOpened == 0){
+//            DataObj.sharedInstance.setStepsTaken(steps: 10000)
+//            DataObj.sharedInstance.hasOpened = 1
+//        }
         var stepData = DataObj.sharedInstance.getStepsTaken()
         
         let scene = GameScene(size: view.bounds.size)

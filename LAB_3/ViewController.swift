@@ -22,12 +22,12 @@ class ViewController: UIViewController, MotionDelegate {
     @IBOutlet weak var congratsLabel: UILabel!
     
     var animationView: LottieAnimationView!
-    var STEP_GOAL = 7000      //can set with button, this is default value //HAVING an issue w this rn where if its set above
+    var STEP_GOAL = 7000      //can set with button, this is default value
     let motionModel = MotionModel()
     let pedometer = CMPedometer()
     var yesterdayGoalMet: Bool = false
+    var yesterdayStepGoal: Int = 7000       //set default for yesterdaystepgoal, save in seperate var
     var stepsAtAppStart: Int = 0
-    var lastKnownSteps: Int = 0
     
 //    let dataObj = DataObj()
     
@@ -37,18 +37,18 @@ class ViewController: UIViewController, MotionDelegate {
         if let savedGoal = UserDefaults.standard.value(forKey: "stepGoal") as? Int {
                 self.STEP_GOAL = savedGoal
             }
+        if let savedYesterdayGoal = UserDefaults.standard.value(forKey: "yesterdayStepGoal") as? Int {
+                    self.yesterdayStepGoal = savedYesterdayGoal
+                }
         
         congratsLabel.isHidden = true   //congrats hidden initially
-        //ModuleB.isHidden = true
         
         motionModel.delegate = self           //motion updates will be updated here
         motionModel.startPedometerMonitoring()
         motionModel.startActivityMonitoring()
     
         setupUI()
-        
-        fetchYesterdaySteps()
-        
+        fetchYesterdaySteps()     //this will dictate whether the button is shown or not
         fetchTodaySteps()
 
     }
@@ -103,7 +103,7 @@ class ViewController: UIViewController, MotionDelegate {
                             
                             DataObj.sharedInstance.setStepsTaken(steps: yesterdaySteps)
                             
-                            self.yesterdayGoalMet = yesterdaySteps >= self.STEP_GOAL     //check if yesterdays goal was met
+                            self.yesterdayGoalMet = yesterdaySteps >= self.yesterdayStepGoal    //check if yesterdays goal was met
                             self.moduleBButton.isHidden = !self.yesterdayGoalMet    //if it was not met, hide the button
                             
                         } else {
@@ -130,7 +130,7 @@ class ViewController: UIViewController, MotionDelegate {
                     self.STEP_GOAL = goal
                     UserDefaults.standard.set(self.STEP_GOAL, forKey: "stepGoal")
                     
-                    self.fetchTodaySteps()
+                    self.fetchTodaySteps()   //update goal for td without affecting yd goal
                     
                 }
             }
@@ -162,7 +162,8 @@ class ViewController: UIViewController, MotionDelegate {
     
     func pedometerUpdated(pedData: CMPedometerData) {
         DispatchQueue.main.async {
-            let totalStepsToday = self.stepsAtAppStart + pedData.numberOfSteps.intValue // Directly use numberOfSteps
+            //add the steps for the day UNTIL the app was opened + the steps after app was opened 
+            let totalStepsToday = self.stepsAtAppStart + pedData.numberOfSteps.intValue 
             
             // Update the label with today's total steps
             self.stepsTodayLabel.text = "\(totalStepsToday)/\(self.STEP_GOAL)"
@@ -184,7 +185,7 @@ class ViewController: UIViewController, MotionDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        fetchTodaySteps() // Refresh today's steps when the view appears
+        fetchTodaySteps() // refresh today's steps when the app reopens
     }
     
 }//end of view controller
