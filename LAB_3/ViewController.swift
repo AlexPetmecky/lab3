@@ -54,17 +54,30 @@ class ViewController: UIViewController, MotionDelegate {
     }
     
     func setupUI() {
-            TitleLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 27)
+        TitleLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 27)
+            TitleLabel.textColor = UIColor.black
             stepsTodayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 30)
+            stepsTodayLabel.textColor = UIColor.black
             stepsYesterdayLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
+            stepsYesterdayLabel.textColor = UIColor.black
             activityLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 20)
+            activityLabel.textColor = UIColor.black
             congratsLabel.font = UIFont(name: "KohinoorTelugu-Medium", size: 15)
+            congratsLabel.textColor = UIColor.black
+           animationView = LottieAnimationView(name: "circleprogress")
+           animationView.frame = CGRect(x: 0, y: 70, width: 450, height: 450)
+           animationView.center.x = view.center.x
+           animationView.contentMode = .scaleAspectFit
+           view.addSubview(animationView)
 
-            animationView = LottieAnimationView(name: "circleprogress")
-            animationView.frame = CGRect(x: 0, y: 70, width: 450, height: 450)
-            animationView.center.x = view.center.x
-            animationView.contentMode = .scaleAspectFit
-            view.addSubview(animationView)
+        
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = view.bounds
+        gradientLayer.colors = [UIColor.white.cgColor, UIColor(red: 0.6, green: 0.8, blue: 1.0, alpha: 1.0).cgColor]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+        view.layer.insertSublayer(gradientLayer, at: 0)
+
         }
     func fetchTodaySteps() {
             let calendar = Calendar.current
@@ -75,11 +88,19 @@ class ViewController: UIViewController, MotionDelegate {
             pedometer.queryPedometerData(from: startOfToday, to: now) { (data, error) in
                 DispatchQueue.main.async {
                     if let data = data {
-                        self.stepsAtAppStart = Int(truncating: data.numberOfSteps)  // Store steps at app start
+                        self.stepsAtAppStart = Int(truncating: data.numberOfSteps)  // store steps at app start
                         self.stepsTodayLabel.text = "\(self.stepsAtAppStart)/\(self.STEP_GOAL)"
                         let initialProgress = min(Float(self.stepsAtAppStart) / Float(self.STEP_GOAL), 1.0)
                         self.animationView.currentProgress = CGFloat(initialProgress)
                         self.animationView.play(fromProgress: CGFloat(initialProgress - 0.01), toProgress: CGFloat(initialProgress), loopMode: .none)
+                       
+                        //if u change ur step goal and you've alr reached it, display congrats
+                        if self.stepsAtAppStart >= self.STEP_GOAL {
+                                            self.congratsLabel.text = "🎉 Congratulations!\nYou have reached your step goal!"
+                                            self.congratsLabel.isHidden = false
+                                        } else {
+                                            self.congratsLabel.isHidden = true
+                                        }
                     } else {
                         print("Error fetching today's steps: \(error?.localizedDescription ?? "unknown error")")
                     }
@@ -128,7 +149,7 @@ class ViewController: UIViewController, MotionDelegate {
             let setAction = UIAlertAction(title: "Set", style: .default) { _ in
                 if let textField = alert.textFields?.first, let text = textField.text, let goal = Int(text) {
                     self.STEP_GOAL = goal
-                    UserDefaults.standard.set(self.STEP_GOAL, forKey: "stepGoal")
+                    UserDefaults.standard.set(self.STEP_GOAL, forKey: "stepGoal")  //remember goal set
                     
                     self.fetchTodaySteps()   //update goal for td without affecting yd goal
                     
