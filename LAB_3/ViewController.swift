@@ -26,7 +26,7 @@ class ViewController: UIViewController, MotionDelegate {
     let motionModel = MotionModel()
     let pedometer = CMPedometer()
     var yesterdayGoalMet: Bool = false
-    var yesterdayStepGoal: Int = 7000       //set default for yesterdaystepgoal, save in seperate var
+    //var yesterdayStepGoal: Int = 7000       //set default for yesterdaystepgoal, save in seperate var
     var stepsAtAppStart: Int = 0
     
 //    let dataObj = DataObj()
@@ -37,9 +37,9 @@ class ViewController: UIViewController, MotionDelegate {
         if let savedGoal = UserDefaults.standard.value(forKey: "stepGoal") as? Int {
                 self.STEP_GOAL = savedGoal
             }
-        if let savedYesterdayGoal = UserDefaults.standard.value(forKey: "yesterdayStepGoal") as? Int {
-                    self.yesterdayStepGoal = savedYesterdayGoal
-                }
+//        if let savedYesterdayGoal = UserDefaults.standard.value(forKey: "yesterdayStepGoal") as? Int {
+//                    self.yesterdayStepGoal = savedYesterdayGoal
+//                }
         
         congratsLabel.isHidden = true   //congrats hidden initially
         
@@ -124,7 +124,7 @@ class ViewController: UIViewController, MotionDelegate {
                             
                             DataObj.sharedInstance.setStepsTaken(steps: yesterdaySteps)
                             
-                            self.yesterdayGoalMet = yesterdaySteps >= self.yesterdayStepGoal    //check if yesterdays goal was met
+                            self.yesterdayGoalMet = yesterdaySteps >= self.STEP_GOAL   //check if yesterdays goal was met
                             self.moduleBButton.isHidden = !self.yesterdayGoalMet    //if it was not met, hide the button
                             
                         } else {
@@ -151,7 +151,12 @@ class ViewController: UIViewController, MotionDelegate {
                     self.STEP_GOAL = goal
                     UserDefaults.standard.set(self.STEP_GOAL, forKey: "stepGoal")  //remember goal set
                     
+                    self.fetchYesterdaySteps()
+                    
+                    
                     self.fetchTodaySteps()   //update goal for td without affecting yd goal
+                    
+                    // self.yesterdayStepGoal = self.STEP_GOAL
                     
                 }
             }
